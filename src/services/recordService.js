@@ -1,12 +1,12 @@
-const Record = require('../database/Record')
+const { PrismaClient } = require('@prisma/client')
 
-const getRecordForWorkout = (workoutId) => {
-  try {
-    const record = Record.getRecordForWorkout(workoutId)
-    return record
-  } catch (error) {
-    throw error
-  }
+const prisma = new PrismaClient()
+
+const getRecordForWorkout = async (workoutId) => {
+  const record = await prisma.records.findMany({
+    where: { workoutId },
+  })
+  return record
 }
 
 module.exports = { getRecordForWorkout }
