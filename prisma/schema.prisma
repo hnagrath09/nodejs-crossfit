@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  male
+  female
+  other
+}
+
+model Workout {
+  id          String    @id @default(uuid())
+  name        String    @db.VarChar(255)
+  mode        String    @db.VarChar(255)
+  equipment   String[]
+  exercises   String[]
+  createdAt   DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime  @updatedAt
+  trainerTips String[]
+  Records     Records[]
+}
+
+model Members {
+  id          String @id @default(uuid())
+  name        String @db.VarChar(255)
+  gender      Gender
+  dateOfBirth String
+  email       String
+  password    String
+}
+
+model Records {
+  id        String  @id @default(uuid())
+  workout   Workout @relation(fields: [workoutId], references: [id])
+  workoutId String
+  record    String
+}
