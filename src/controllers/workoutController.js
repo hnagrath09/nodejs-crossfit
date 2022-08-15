@@ -1,9 +1,9 @@
 const workoutService = require('../services/workoutService')
 
-const getAllWorkouts = (req, res) => {
+const getAllWorkouts = async (req, res) => {
   const { mode } = req.query
   try {
-    const allWorkouts = workoutService.getAllWorkouts({ mode })
+    const allWorkouts = await workoutService.getAllWorkouts({ mode })
     res.send({ status: 'OK', data: allWorkouts })
   } catch (error) {
     res
@@ -12,7 +12,7 @@ const getAllWorkouts = (req, res) => {
   }
 }
 
-const getOneWorkout = (req, res) => {
+const getOneWorkout = async (req, res) => {
   const { workoutId } = req.params
   if (!workoutId) {
     res.status(400).send({
@@ -21,7 +21,7 @@ const getOneWorkout = (req, res) => {
     })
   }
   try {
-    const workout = workoutService.getOneWorkout(workoutId)
+    const workout = await workoutService.getOneWorkout(workoutId)
     res.send({ status: 'OK', data: workout })
   } catch (error) {
     res
@@ -68,7 +68,7 @@ const createNewWorkout = (req, res) => {
   }
 }
 
-const updateOneWorkout = (req, res) => {
+const updateOneWorkout = async (req, res) => {
   const { workoutId } = req.params
   const { body } = req
   if (!workoutId || !body) {
@@ -78,7 +78,10 @@ const updateOneWorkout = (req, res) => {
     })
   }
   try {
-    const updatedWorkout = workoutService.updateOneWorkout(workoutId, body)
+    const updatedWorkout = await workoutService.updateOneWorkout(
+      workoutId,
+      body,
+    )
     res.send({ status: 'Ok', data: updatedWorkout })
   } catch (error) {
     res
@@ -87,7 +90,7 @@ const updateOneWorkout = (req, res) => {
   }
 }
 
-const deleteOneWorkout = (req, res) => {
+const deleteOneWorkout = async (req, res) => {
   const { workoutId } = req.params
   if (!workoutId) {
     res.status(400).send({
@@ -96,7 +99,7 @@ const deleteOneWorkout = (req, res) => {
     })
   }
   try {
-    const deletedWorkout = workoutService.deleteOneWorkout(workoutId)
+    const deletedWorkout = await workoutService.deleteOneWorkout(workoutId)
     res.status(204).send({ status: 'OK', data: deletedWorkout })
   } catch (error) {
     res

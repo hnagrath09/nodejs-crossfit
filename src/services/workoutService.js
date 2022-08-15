@@ -1,54 +1,41 @@
-const { v4: uuid } = require('uuid')
-const Workout = require('../database/Workout')
+const { PrismaClient } = require('@prisma/client')
 
-const getAllWorkouts = (filterParams) => {
-  try {
-    const allWorkouts = Workout.getAllWorkouts(filterParams)
-    return allWorkouts
-  } catch (error) {
-    throw error
-  }
+const prisma = new PrismaClient()
+
+const getAllWorkouts = async (filterParams) => {
+  const workouts = await prisma.workout.findMany({
+    where: { mode: { contains: filterParams.mode } },
+  })
+
+  return workouts
 }
 
-const getOneWorkout = (workoutId) => {
-  try {
-    const workout = Workout.getOneWorkout(workoutId)
-    return workout
-  } catch (error) {
-    throw error
-  }
+const getOneWorkout = async (workoutId) => {
+  const workout = await prisma.workout.findUnique({
+    where: { id: workoutId },
+  })
+  return workout
 }
 
-const createNewWorkout = (newWorkout) => {
-  const workoutToInsert = {
-    ...newWorkout,
-    id: uuid(),
-    createdAt: new Date().toLocaleString('en-US', { timeZone: 'UTC' }),
-    updatedAt: new Date().toLocaleString('en-US', { timeZone: 'UTC' }),
-  }
-  try {
-    const createdWorkout = Workout.createNewWorkout(workoutToInsert)
-    return createdWorkout
-  } catch (error) {
-    throw error
-  }
+const createNewWorkout = async (newWorkout) => {
+  const createdWorkout = await prisma.workout.create({ data: newWorkout })
+  return createdWorkout
 }
 
-const updateOneWorkout = (workoutId, changes) => {
-  try {
-    const updatedWorkout = Workout.updateOneWorkout(workoutId, changes)
-    return updatedWorkout
-  } catch (error) {
-    throw error
-  }
+const updateOneWorkout = async (workoutId, changes) => {
+  const updatedWorkout = await prisma.workout.update({
+    where: { id: workoutId },
+    data: { ...changes },
+  })
+  return updatedWorkout
 }
 
-const deleteOneWorkout = (workoutId) => {
-  try {
-    Workout.deleteOneWorkout(workoutId)
-  } catch (error) {
-    throw error
-  }
+const deleteOneWorkout = async (workoutId) => {
+  const deletedWorkout = await prisma.workout.delete({
+    where: { id: workoutId },
+    select: { Records: true },
+  })
+  return deletedWorkout
 }
 
 module.exports = {
